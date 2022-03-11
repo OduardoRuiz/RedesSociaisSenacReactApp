@@ -1,21 +1,28 @@
 import React, { useRef, useState } from "react"
+import { PostContext } from "../App";
+const NewPost = ({ username }) => {
 
-const NewPost = ({ posts, setPosts, username }) => {
-    const [content, setContent] = useState()
+    const  dispatch  = React.useContext(PostContext);
+
+    const [content, setContent] = useState("")
     const image = useRef()
 
-    const handleChangeMessage = ({ target: { value } }) => {
-        setContent(value)
+    function handleChangeMessage(event) {
+        setContent(event.target.value)
     }
 
     const handleClickNewPost = () => {
-        setPosts([{
+        const newPost = {
             content: content,
             image: image.current.files[0],
             username: username,
-            likes: 0,
-            date: new Date()
-        }, ...posts])
+            date: new Date(),
+            likes: 0
+        }
+
+        dispatch({ type: "CRIAR_POST", payload: { post: newPost } })
+
+        
 
         setContent("")
         image.current.value = ""
@@ -23,6 +30,7 @@ const NewPost = ({ posts, setPosts, username }) => {
 
     return (
         <div>
+
             <input value={content} type="text" placeholder="O que você está pensando?" onChange={handleChangeMessage} />
             <input type="file" ref={image} />
             <button onClick={handleClickNewPost}>Post</button>
